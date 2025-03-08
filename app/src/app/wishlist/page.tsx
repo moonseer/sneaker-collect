@@ -7,29 +7,29 @@ import { useAuth } from '@/lib/auth';
 import { getSneakers } from '@/lib/supabase';
 import { Sneaker } from '@/lib/schema';
 
-export default function CollectionPage() {
+export default function WishlistPage() {
   const { user } = useAuth();
-  const [sneakers, setSneakers] = useState<Sneaker[]>([]);
+  const [wishlist, setWishlist] = useState<Sneaker[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadSneakers() {
+    async function loadWishlist() {
       if (user) {
-        const data = await getSneakers(user.id, false);
-        setSneakers(data as Sneaker[]);
+        const data = await getSneakers(user.id, true);
+        setWishlist(data as Sneaker[]);
       }
       setLoading(false);
     }
 
-    loadSneakers();
+    loadWishlist();
   }, [user]);
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold">My Collection</h1>
-        <Link href="/collection/add">
-          <Button>Add Sneaker</Button>
+        <h1 className="text-3xl font-bold">My Wishlist</h1>
+        <Link href="/wishlist/add">
+          <Button>Add to Wishlist</Button>
         </Link>
       </div>
 
@@ -39,7 +39,7 @@ export default function CollectionPage() {
           <div className="flex-1">
             <input
               type="text"
-              placeholder="Search sneakers..."
+              placeholder="Search wishlist..."
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
           </div>
@@ -51,17 +51,8 @@ export default function CollectionPage() {
               <option value="jordan">Jordan</option>
               <option value="yeezy">Yeezy</option>
             </select>
-            <select className="rounded-md border border-input bg-background px-3 py-2 text-sm">
-              <option value="">All Sizes</option>
-              <option value="7">US 7</option>
-              <option value="8">US 8</option>
-              <option value="9">US 9</option>
-              <option value="10">US 10</option>
-              <option value="11">US 11</option>
-              <option value="12">US 12</option>
-            </select>
             <Button variant="outline" size="sm">
-              More Filters
+              Filter
             </Button>
           </div>
         </div>
@@ -71,10 +62,10 @@ export default function CollectionPage() {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-            <p>Loading your collection...</p>
+            <p>Loading your wishlist...</p>
           </div>
         </div>
-      ) : sneakers.length === 0 ? (
+      ) : wishlist.length === 0 ? (
         // Empty State
         <div className="flex flex-col items-center justify-center rounded-lg border bg-card p-12 text-center shadow-sm">
           <div className="mb-4 rounded-full bg-primary/10 p-3">
@@ -90,24 +81,21 @@ export default function CollectionPage() {
               strokeLinejoin="round"
               className="h-6 w-6 text-primary"
             >
-              <path d="M18.5 2h-13A3.5 3.5 0 0 0 2 5.5v13A3.5 3.5 0 0 0 5.5 22h13a3.5 3.5 0 0 0 3.5-3.5v-13A3.5 3.5 0 0 0 18.5 2Z"></path>
-              <path d="M8 10v4"></path>
-              <path d="M12 8v8"></path>
-              <path d="M16 12v2"></path>
+              <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path>
             </svg>
           </div>
-          <h3 className="mb-2 text-xl font-semibold">No sneakers yet</h3>
+          <h3 className="mb-2 text-xl font-semibold">Your wishlist is empty</h3>
           <p className="mb-4 text-muted-foreground">
-            Add your first sneaker to start building your collection.
+            Add sneakers to your wishlist to keep track of what you want to buy next.
           </p>
-          <Link href="/collection/add">
-            <Button>Add Your First Sneaker</Button>
+          <Link href="/wishlist/add">
+            <Button>Add Your First Wishlist Item</Button>
           </Link>
         </div>
       ) : (
-        // Sneaker Grid
+        // Wishlist Grid
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {sneakers.map((sneaker) => (
+          {wishlist.map((sneaker) => (
             <div key={sneaker.id} className="overflow-hidden rounded-lg border bg-card shadow-sm transition-all hover:shadow-md">
               <div className="aspect-square overflow-hidden bg-muted">
                 {sneaker.images && sneaker.images.length > 0 ? (
@@ -130,16 +118,12 @@ export default function CollectionPage() {
                   <span className="font-medium">${sneaker.market_value || sneaker.retail_price || 'N/A'}</span>
                 </div>
                 <div className="mt-4 flex space-x-2">
-                  <Link href={`/collection/${sneaker.id}`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full">
-                      View
-                    </Button>
-                  </Link>
-                  <Link href={`/collection/${sneaker.id}/edit`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full">
-                      Edit
-                    </Button>
-                  </Link>
+                  <Button variant="default" size="sm" className="flex-1">
+                    Add to Collection
+                  </Button>
+                  <Button variant="outline" size="sm" className="flex-1">
+                    Remove
+                  </Button>
                 </div>
               </div>
             </div>
