@@ -12,6 +12,128 @@ A modern web application for tracking and organizing your sneaker collection.
 - OpenAI GPT-4 Turbo integration for accurate sneaker lookup by SKU
 - Auto-update sneaker information using OpenAI GPT-4 Turbo
 
+## Architecture
+
+### Component Diagram
+The following diagram shows the main components of the application and their relationships:
+
+```mermaid
+graph TD
+    A[App] --> B[Layout]
+    B --> C[Navbar]
+    B --> D[Pages]
+    D --> E[Dashboard]
+    D --> F[Collection]
+    D --> G[Wishlist]
+    D --> H[Add/Edit Forms]
+    
+    F --> I[SneakerList]
+    I --> J[SneakerCard]
+    F --> K[FilterPanel]
+    F --> L[SortOptions]
+    
+    H --> M[SneakerForm]
+    M --> N[SneakerSearch]
+    
+    E --> O[AnalyticsPanel]
+    E --> P[StatCards]
+    
+    G --> Q[WishlistItems]
+    
+    N --> R[LLM API]
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:1px
+    style R fill:#bfb,stroke:#333,stroke-width:2px
+```
+
+### Data Flow Diagram
+This diagram illustrates how data flows through the application:
+
+```mermaid
+flowchart TD
+    User([User]) <--> UI[User Interface]
+    UI <--> Auth[Authentication]
+    Auth <--> DB[(Supabase Database)]
+    
+    UI --> AddForm[Add Sneaker Form]
+    UI --> EditForm[Edit Sneaker Form]
+    UI --> Collection[Collection View]
+    UI --> Wishlist[Wishlist View]
+    UI --> Dashboard[Analytics Dashboard]
+    
+    AddForm --> SKULookup[SKU Lookup]
+    EditForm --> SKULookup
+    SKULookup --> LLMAPI[OpenAI GPT-4 API]
+    LLMAPI --> SneakerData[Sneaker Data]
+    
+    AddForm --> DB
+    EditForm --> DB
+    Collection --> DB
+    Wishlist --> DB
+    Dashboard --> DB
+    
+    DB --> Stats[Statistics Processing]
+    Stats --> Dashboard
+    
+    style User fill:#f96,stroke:#333,stroke-width:2px
+    style LLMAPI fill:#bfb,stroke:#333,stroke-width:2px
+    style DB fill:#69f,stroke:#333,stroke-width:2px
+```
+
+### Entity Relationship Diagram
+This diagram shows the data model of the application:
+
+```mermaid
+erDiagram
+    USER ||--o{ SNEAKER : owns
+    USER ||--o{ WISHLIST_ITEM : wants
+    
+    USER {
+        string id PK
+        string email
+        string name
+        datetime created_at
+        datetime last_login
+    }
+    
+    SNEAKER {
+        string id PK
+        string user_id FK
+        string brand
+        string model
+        string name
+        string colorway
+        float size
+        string condition
+        string sku
+        float retail_price
+        float market_value
+        date purchase_date
+        float purchase_price
+        string purchase_location
+        string notes
+        string image_url
+        boolean is_wishlist
+        datetime created_at
+        datetime updated_at
+    }
+    
+    WISHLIST_ITEM {
+        string id PK
+        string user_id FK
+        string brand
+        string model
+        string name
+        string colorway
+        float size
+        string sku
+        float retail_price
+        float market_value
+        datetime created_at
+    }
+```
+
 ## Tech Stack
 
 - Next.js

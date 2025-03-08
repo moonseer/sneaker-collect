@@ -1,16 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth';
 import { getSneakers } from '@/lib/supabase';
 import { Sneaker } from '@/lib/schema';
+import SortOptions, { SortOption } from '@/components/sneakers/SortOptions';
 
 export default function CollectionPage() {
   const { user } = useAuth();
   const [sneakers, setSneakers] = useState<Sneaker[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortOption, setSortOption] = useState<SortOption>({ field: 'brand', direction: 'asc' });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [brandFilter, setBrandFilter] = useState('');
+  const [sizeFilter, setSizeFilter] = useState('');
 
   useEffect(() => {
     async function loadSneakers() {
@@ -24,6 +29,97 @@ export default function CollectionPage() {
     loadSneakers();
   }, [user]);
 
+  // Apply sorting and filtering
+  const filteredAndSortedSneakers = useMemo(() => {
+    // First, filter the sneakers
+    let filtered = [...sneakers];
+    
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        sneaker => 
+          sneaker.brand.toLowerCase().includes(query) ||
+          sneaker.model.toLowerCase().includes(query) ||
+          sneaker.name.toLowerCase().includes(query) ||
+          sneaker.colorway.toLowerCase().includes(query) ||
+          (sneaker.sku && sneaker.sku.toLowerCase().includes(query))
+      );
+    }
+    
+    // Apply brand filter
+    if (brandFilter) {
+      filtered = filtered.filter(
+        sneaker => sneaker.brand.toLowerCase() === brandFilter.toLowerCase()
+      );
+    }
+    
+    // Apply size filter
+    if (sizeFilter) {
+      const size = parseFloat(sizeFilter);
+      filtered = filtered.filter(sneaker => sneaker.size === size);
+    }
+    
+    // Then, sort the filtered sneakers
+    return filtered.sort((a, b) => {
+      const field = sortOption.field;
+      const direction = sortOption.direction === 'asc' ? 1 : -1;
+      
+      // Handle special cases for dates and nullable fields
+      if (field === 'purchase_date') {
+        const dateA = a.purchase_date ? new Date(a.purchase_date).getTime() : 0;
+        const dateB = b.purchase_date ? new Date(b.purchase_date).getTime() : 0;
+        return (dateA - dateB) * direction;
+      }
+      
+      if (field === 'market_value' || field === 'purchase_price' || field === 'retail_price') {
+        const valueA = a[field] || 0;
+        const valueB = b[field] || 0;
+        return (valueA - valueB) * direction;
+      }
+      
+      // Default string comparison for other fields
+      const valueA = String(a[field] || '').toLowerCase();
+      const valueB = String(b[field] || '').toLowerCase();
+      return valueA.localeCompare(valueB) * direction;
+    });
+  }, [sneakers, sortOption, searchQuery, brandFilter, sizeFilter]);
+
+  // Get unique brands for the filter dropdown
+  const uniqueBrands = useMemo(() => {
+    const brands = new Set(sneakers.map(sneaker => sneaker.brand));
+    return Array.from(brands).sort();
+  }, [sneakers]);
+
+  // Get unique sizes for the filter dropdown
+  const uniqueSizes = useMemo(() => {
+    const sizes = new Set(sneakers.map(sneaker => sneaker.size));
+    return Array.from(sizes).sort((a, b) => a - b);
+  }, [sneakers]);
+
+  const handleSortChange = (newSortOption: SortOption) => {
+    setSortOption(newSortOption);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleBrandFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setBrandFilter(e.target.value);
+  };
+
+  const handleSizeFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSizeFilter(e.target.value);
+  };
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setBrandFilter('');
+    setSizeFilter('');
+    setSortOption({ field: 'brand', direction: 'asc' });
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
@@ -33,36 +129,61 @@ export default function CollectionPage() {
         </Link>
       </div>
 
-      {/* Search and Filter */}
+      {/* Search, Filter, and Sort */}
       <div className="mb-6 rounded-lg border bg-card p-4 shadow-sm">
-        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-x-4 md:space-y-0">
+        <div className="flex flex-col space-y-4">
+          {/* Search */}
           <div className="flex-1">
             <input
               type="text"
               placeholder="Search sneakers..."
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
           </div>
-          <div className="flex space-x-2">
-            <select className="rounded-md border border-input bg-background px-3 py-2 text-sm">
-              <option value="">All Brands</option>
-              <option value="nike">Nike</option>
-              <option value="adidas">Adidas</option>
-              <option value="jordan">Jordan</option>
-              <option value="yeezy">Yeezy</option>
-            </select>
-            <select className="rounded-md border border-input bg-background px-3 py-2 text-sm">
-              <option value="">All Sizes</option>
-              <option value="7">US 7</option>
-              <option value="8">US 8</option>
-              <option value="9">US 9</option>
-              <option value="10">US 10</option>
-              <option value="11">US 11</option>
-              <option value="12">US 12</option>
-            </select>
-            <Button variant="outline" size="sm">
-              More Filters
-            </Button>
+          
+          {/* Filters and Sort */}
+          <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-x-4 md:space-y-0">
+            <div className="flex flex-1 space-x-2">
+              <select 
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={brandFilter}
+                onChange={handleBrandFilterChange}
+              >
+                <option value="">All Brands</option>
+                {uniqueBrands.map(brand => (
+                  <option key={brand} value={brand}>{brand}</option>
+                ))}
+              </select>
+              
+              <select 
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={sizeFilter}
+                onChange={handleSizeFilterChange}
+              >
+                <option value="">All Sizes</option>
+                {uniqueSizes.map(size => (
+                  <option key={size} value={size}>US {size}</option>
+                ))}
+              </select>
+              
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={clearFilters}
+                className="whitespace-nowrap"
+              >
+                Clear Filters
+              </Button>
+            </div>
+            
+            <div className="w-full md:w-64">
+              <SortOptions 
+                onSortChange={handleSortChange} 
+                currentSort={sortOption}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -74,7 +195,7 @@ export default function CollectionPage() {
             <p>Loading your collection...</p>
           </div>
         </div>
-      ) : sneakers.length === 0 ? (
+      ) : filteredAndSortedSneakers.length === 0 ? (
         // Empty State
         <div className="flex flex-col items-center justify-center rounded-lg border bg-card p-12 text-center shadow-sm">
           <div className="mb-4 rounded-full bg-primary/10 p-3">
@@ -96,18 +217,30 @@ export default function CollectionPage() {
               <path d="M16 12v2"></path>
             </svg>
           </div>
-          <h3 className="mb-2 text-xl font-semibold">No sneakers yet</h3>
-          <p className="mb-4 text-muted-foreground">
-            Add your first sneaker to start building your collection.
-          </p>
-          <Link href="/collection/add">
-            <Button>Add Your First Sneaker</Button>
-          </Link>
+          {sneakers.length === 0 ? (
+            <>
+              <h3 className="mb-2 text-xl font-semibold">No sneakers yet</h3>
+              <p className="mb-4 text-muted-foreground">
+                Add your first sneaker to start building your collection.
+              </p>
+              <Link href="/collection/add">
+                <Button>Add Your First Sneaker</Button>
+              </Link>
+            </>
+          ) : (
+            <>
+              <h3 className="mb-2 text-xl font-semibold">No matching sneakers</h3>
+              <p className="mb-4 text-muted-foreground">
+                Try adjusting your search or filters to find what you're looking for.
+              </p>
+              <Button onClick={clearFilters}>Clear All Filters</Button>
+            </>
+          )}
         </div>
       ) : (
         // Sneaker Grid
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {sneakers.map((sneaker) => (
+          {filteredAndSortedSneakers.map((sneaker) => (
             <div key={sneaker.id} className="overflow-hidden rounded-lg border bg-card shadow-sm transition-all hover:shadow-md">
               <div className="aspect-square overflow-hidden bg-muted">
                 {sneaker.images && sneaker.images.length > 0 ? (
