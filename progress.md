@@ -50,7 +50,11 @@
 - [ ] Create sorting options
 - [x] Build wishlist functionality
 - [ ] Develop analytics dashboard
-- [ ] Integrate with sneaker API for data lookup
+- [x] Integrate with sneaker API for data lookup
+- [x] Implement LLM-based sneaker lookup by SKU
+- [x] Add sneaker information update feature using LLM lookup
+- [x] Upgrade to external LLM API for improved sneaker lookup
+- [x] Integrate OpenAI GPT-4 Turbo for high-quality sneaker information
 
 ## Testing
 - [x] Set up Jest and React Testing Library
@@ -62,6 +66,10 @@
 - [ ] Write tests for add/edit forms
 - [ ] Write tests for wishlist functionality
 - [x] Configure code coverage reporting
+- [x] Fix test issues with useRouter mock
+- [x] Implement proper act() wrapping for async tests
+- [x] Fix component test selectors for better reliability
+- [x] Resolve test timeouts and stability issues
 
 ## Bug Fixes and Improvements
 - [x] Add 'use client' directive to client components

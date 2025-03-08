@@ -2,8 +2,7 @@
 import '@testing-library/jest-dom';
 
 // Mock next/navigation
-const useRouter = jest.fn();
-useRouter.mockReturnValue({
+const useRouterMock = jest.fn().mockReturnValue({
   push: jest.fn(),
   replace: jest.fn(),
   prefetch: jest.fn(),
@@ -11,13 +10,13 @@ useRouter.mockReturnValue({
 });
 
 jest.mock('next/navigation', () => ({
-  useRouter: () => useRouter.mockReturnValue(),
+  useRouter: () => useRouterMock(),
   usePathname: () => '',
   useParams: () => ({}),
 }));
 
 // Make the mock available globally
-global.useRouterMock = useRouter;
+global.useRouterMock = useRouterMock;
 
 // Mock the auth context
 jest.mock('@/lib/auth', () => ({

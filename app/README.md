@@ -9,6 +9,8 @@ A modern web application for tracking and organizing your sneaker collection.
 - Manage your sneaker wishlist
 - View analytics about your collection
 - Responsive design for desktop and mobile
+- OpenAI GPT-4 Turbo integration for accurate sneaker lookup by SKU
+- Auto-update sneaker information using OpenAI GPT-4 Turbo
 
 ## Tech Stack
 
@@ -56,6 +58,9 @@ npm test
 
 # Run tests in watch mode (for development)
 npm run test:watch
+
+# Run tests with coverage report
+npm test -- --coverage
 ```
 
 ### Test Structure
@@ -63,6 +68,24 @@ npm run test:watch
 - Unit tests for utility functions and schema validation
 - Component tests for UI components
 - Integration tests for pages and features
+
+Tests are co-located with the code they test in `__tests__` directories.
+
+### Test Implementation Details
+
+The test suite includes:
+
+- Mock implementations for Next.js router, authentication, and Supabase
+- Proper handling of asynchronous operations with `act()` and `waitFor()`
+- Component rendering tests with realistic user interactions
+- Validation of component state and UI updates
+
+### Common Testing Issues and Solutions
+
+- **Router Mocking**: The `useRouter` hook from Next.js is mocked globally in `jest.setup.js`
+- **Authentication**: The auth context is mocked to provide a consistent user state
+- **Asynchronous Testing**: All component tests use `act()` to properly handle React state updates
+- **Test Timeouts**: Increased timeouts for complex component tests to prevent flaky tests
 
 ### Test Coverage
 

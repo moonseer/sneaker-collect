@@ -6,8 +6,11 @@ The app will have intuitive search and filter functionality.
 - Add a sneaker to the collection
     - add sneaker by sku number, common name
     - search a common sneaker database to obtain details about sneaker (ie api)
+    - use OpenAI GPT-4 Turbo to automatically find sneaker details by SKU
 - View all sneakers in the collection
 - Edit a sneaker in the collection
+    - manually update sneaker details
+    - automatically update information using OpenAI GPT-4 Turbo by SKU lookup
 - Delete a sneaker from the collection
 - Search for a sneaker in the collection
 - Filter the sneakers in the collection by brand, model, colorway, size, etc.
@@ -42,6 +45,7 @@ The app will have intuitive search and filter functionality.
 - Supabase
 - Stripe
 - Sneaker APIs (StockX, GOAT, or similar for data)
+- Jest and React Testing Library for testing
 
 ## Development Roadmap
 1. Set up project structure and tech stack
@@ -54,5 +58,22 @@ The app will have intuitive search and filter functionality.
 8. Polish UI/UX and responsive design
 9. Testing and bug fixes
 10. Deployment
+
+## Testing
+The application includes a comprehensive test suite using Jest and React Testing Library. Tests cover:
+- Utility functions
+- Schema validation
+- Component rendering and interactions
+- API integration
+
+To run the tests:
+```bash
+npm test
+```
+
+To run tests with coverage report:
+```bash
+npm test -- --coverage
+```
 
 

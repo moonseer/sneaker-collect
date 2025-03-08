@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth';
-import { getSneakerById, deleteSneaker } from '@/lib/supabase';
+import { getSneakerById, deleteSneaker, updateSneaker } from '@/lib/supabase';
 import { Sneaker } from '@/lib/schema';
+import SneakerUpdateForm from '@/components/sneakers/SneakerUpdateForm';
 
 export default function SneakerDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function SneakerDetailPage({ params }: { params: { id: string } }
   const [sneaker, setSneaker] = useState<Sneaker | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     async function loadSneaker() {
@@ -40,6 +42,23 @@ export default function SneakerDetailPage({ params }: { params: { id: string } }
       console.error('Error deleting sneaker:', error);
       alert('Failed to delete sneaker');
       setDeleting(false);
+    }
+  };
+
+  const handleUpdate = async (updatedSneaker: Partial<Sneaker>) => {
+    if (!sneaker) return;
+    
+    setUpdating(true);
+    try {
+      await updateSneaker(sneaker.id, updatedSneaker);
+      // Refresh the sneaker data
+      const refreshedData = await getSneakerById(params.id);
+      setSneaker(refreshedData as Sneaker);
+    } catch (error) {
+      console.error('Error updating sneaker:', error);
+      alert('Failed to update sneaker');
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -81,7 +100,7 @@ export default function SneakerDetailPage({ params }: { params: { id: string } }
           <Link href={`/collection/${params.id}/edit`}>
             <Button variant="outline">Edit</Button>
           </Link>
-          <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+          <Button variant="destructive" onClick={handleDelete} disabled={deleting || updating}>
             {deleting ? 'Deleting...' : 'Delete'}
           </Button>
         </div>
@@ -102,6 +121,14 @@ export default function SneakerDetailPage({ params }: { params: { id: string } }
                 <span className="text-muted-foreground">No Image</span>
               </div>
             )}
+          </div>
+          
+          {/* Add the SneakerUpdateForm component */}
+          <div className="mt-6">
+            <SneakerUpdateForm 
+              currentSneaker={sneaker} 
+              onUpdate={handleUpdate} 
+            />
           </div>
         </div>
 
