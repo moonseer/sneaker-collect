@@ -29,6 +29,15 @@ The app will have intuitive search and filter functionality.
 - **Wishlist Section**: Similar to collection view but for desired sneakers
 - **Analytics Dashboard**: Visual representation of collection statistics
 - **Responsive Design**: Optimized for both desktop and mobile experiences
+- **Design System**: Comprehensive design system with consistent typography, spacing, and components
+- **Animations**: Smooth animations and transitions for a polished user experience
+
+## Performance Optimizations
+- **Code Splitting**: Lazy loading of components to reduce initial bundle size
+- **Image Optimization**: Efficient image loading with lazy loading, progressive loading, and proper sizing
+- **Caching**: In-memory cache for database queries and API calls
+- **Database Optimization**: Batch loading and query optimization for efficient data fetching
+- **Bundle Size Reduction**: Optimized webpack configuration for smaller bundle sizes
 
 ## Architecture
 
@@ -94,9 +103,13 @@ flowchart TD
     DB --> Stats[Statistics Processing]
     Stats --> Dashboard
     
+    DB --> Cache[Data Cache]
+    Cache --> UI
+    
     style User fill:#f96,stroke:#333,stroke-width:2px
     style LLMAPI fill:#bfb,stroke:#333,stroke-width:2px
     style DB fill:#69f,stroke:#333,stroke-width:2px
+    style Cache fill:#9cf,stroke:#333,stroke-width:2px
 ```
 
 ### Entity Relationship Diagram
@@ -165,9 +178,10 @@ erDiagram
 - Tailwind CSS
 - Shadcn UI
 - Supabase
-- Stripe
-- Sneaker APIs (StockX, GOAT, or similar for data)
+- Framer Motion (for animations)
+- OpenAI GPT-4 API
 - Jest and React Testing Library for testing
+- Docker and Docker Compose for containerization
 
 ## Development Roadmap
 1. Set up project structure and tech stack
@@ -179,7 +193,41 @@ erDiagram
 7. Develop analytics dashboard
 8. Polish UI/UX and responsive design
 9. Testing and bug fixes
-10. Deployment
+10. Performance optimizations
+11. Containerization with Docker
+12. Deployment
+
+## Getting Started
+
+### Local Development
+
+You can run the application locally using npm:
+
+```bash
+cd app
+npm install
+npm run dev
+```
+
+### Docker Development Environment
+
+For a consistent development experience, you can use the Docker setup:
+
+1. Make sure Docker and Docker Compose are installed
+2. Run the development environment:
+   ```bash
+   chmod +x docker-dev.sh
+   ./docker-dev.sh start
+   ```
+3. Access the application at http://localhost:80
+
+The Docker setup includes:
+- Next.js application container
+- PostgreSQL database container
+- Redis cache container
+- Nginx proxy container
+
+For more details on the Docker setup, see [DOCKER.md](./DOCKER.md).
 
 ## Testing
 The application includes a comprehensive test suite using Jest and React Testing Library. Tests cover:
@@ -187,15 +235,46 @@ The application includes a comprehensive test suite using Jest and React Testing
 - Schema validation
 - Component rendering and interactions
 - API integration
+- Performance utilities (caching, batch loading)
 
-To run the tests:
+### Running Tests Locally
+
+To run the tests locally:
 ```bash
+cd app
 npm test
 ```
 
 To run tests with coverage report:
 ```bash
+cd app
 npm test -- --coverage
 ```
+
+### Running Tests in Docker
+
+To run tests in the Docker environment:
+```bash
+./docker-dev.sh test
+```
+
+## Performance Analysis
+The application includes tools for analyzing and optimizing performance:
+
+```bash
+# Analyze the bundle size
+npm run analyze
+
+# Analyze only the server bundle
+npm run analyze:server
+
+# Analyze only the browser bundle
+npm run analyze:browser
+```
+
+## Documentation
+Additional documentation can be found in the `docs` directory:
+- [Performance Optimizations](./docs/performance-optimizations.md)
+- [Docker Setup](./DOCKER.md)
 
 

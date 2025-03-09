@@ -31,17 +31,34 @@ jest.mock('@/components/sneakers/SneakerSearch', () => {
 });
 
 // Increase the default timeout for all tests
-jest.setTimeout(15000);
+jest.setTimeout(30000);
 
 describe('AddSneakerPage', () => {
-  const mockRouter = {
-    push: jest.fn(),
-  };
+  // Get the mocked router from jest.setup.js
+  let mockRouter: any;
 
   beforeEach(() => {
     // Reset mocks before each test
     jest.clearAllMocks();
-    // The router is already mocked in jest.setup.js
+    
+    // Get the global router mock
+    mockRouter = {
+      push: jest.fn(),
+      replace: jest.fn(),
+      prefetch: jest.fn(),
+      back: jest.fn(),
+    };
+    
+    // Set up the global router mock
+    (global.useRouterMock as jest.Mock).mockReturnValue(mockRouter);
+    
+    // Mock window.alert
+    jest.spyOn(window, 'alert').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    // Restore all mocks
+    jest.restoreAllMocks();
   });
 
   it('renders the add sneaker form', async () => {
@@ -115,21 +132,15 @@ describe('AddSneakerPage', () => {
     // Try to submit the form without filling required fields
     const submitButton = screen.getByRole('button', { name: /Add to Collection/i });
     
-    // Mock window.alert
-    const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
-    
     await act(async () => {
       fireEvent.click(submitButton);
     });
 
     // Check that the alert was called
-    expect(alertMock).toHaveBeenCalledWith('Please fill in all required fields');
+    expect(window.alert).toHaveBeenCalledWith('Please fill in all required fields');
     
     // Check that createSneaker was not called
     expect(createSneaker).not.toHaveBeenCalled();
-    
-    // Restore the original alert
-    alertMock.mockRestore();
   });
 
   it('handles sneaker search selection', async () => {

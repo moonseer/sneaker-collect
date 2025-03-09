@@ -33,8 +33,16 @@ import {
 
 // Define colors for charts
 const COLORS = [
-  '#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', 
-  '#82CA9D', '#FFC658', '#8DD1E1', '#A4DE6C', '#D0ED57'
+  'hsl(213, 94%, 48%)', // primary
+  'hsl(24, 100%, 62%)',  // accent
+  'hsl(142, 72%, 50%)',  // success
+  'hsl(38, 92%, 50%)',   // warning
+  'hsl(0, 84%, 60%)',    // destructive
+  'hsl(220, 8%, 46%)',   // muted-foreground
+  'hsl(213, 94%, 68%)',  // primary (dark)
+  'hsl(24, 100%, 72%)',  // accent (lighter)
+  'hsl(142, 72%, 60%)',  // success (lighter)
+  'hsl(38, 92%, 60%)',   // warning (lighter)
 ];
 
 export default function DashboardPage() {

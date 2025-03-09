@@ -28,6 +28,9 @@ export function Navbar() {
               <Link href="/wishlist" className="text-sm hover:underline">
                 Wishlist
               </Link>
+              <Link href="/design" className="text-sm hover:underline">
+                Design System
+              </Link>
               <Button variant="ghost" size="sm" onClick={() => signOut()}>
                 Sign Out
               </Button>
