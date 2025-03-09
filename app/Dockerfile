@@ -9,6 +9,8 @@ RUN npm ci
 FROM base AS development
 WORKDIR /app
 COPY . .
+# Install additional dependencies needed for development
+RUN npm install @radix-ui/react-checkbox @radix-ui/react-dialog @radix-ui/react-select
 # Expose port for development server
 EXPOSE 3000
 # Start development server with hot reloading
@@ -18,6 +20,8 @@ CMD ["npm", "run", "dev"]
 FROM base AS builder
 WORKDIR /app
 COPY . .
+# Install additional dependencies needed for build
+RUN npm install @radix-ui/react-checkbox @radix-ui/react-dialog @radix-ui/react-select
 # Set environment variables for production build
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY

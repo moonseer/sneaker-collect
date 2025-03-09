@@ -9,6 +9,7 @@ This document provides instructions for setting up and using the containerized e
 - [Development Environment](#development-environment)
 - [Production Environment](#production-environment)
 - [Common Operations](#common-operations)
+- [Environment Variables](#environment-variables)
 - [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
@@ -186,6 +187,61 @@ To access the PostgreSQL database directly:
 psql -U postgres -d sneaker_collect
 ```
 
+## Environment Variables
+
+The Docker setup uses environment variables for configuration. These variables are passed from your host machine to the containers.
+
+### Required Environment Variables
+
+The following environment variables are required for the application to function properly:
+
+```
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-supabase-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+# OpenAI API Configuration
+NEXT_PUBLIC_OPENAI_API_KEY=your-openai-api-key
+
+# PostgreSQL Configuration
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your-secure-password
+POSTGRES_DB=sneaker_collect
+```
+
+### Environment Files
+
+The Docker setup supports multiple environment files:
+
+1. **`.env`**: Main environment file in the project root, used by Docker Compose
+2. **`.env.local`**: Local environment file in the app directory, used by Next.js directly
+
+For Docker development, the `.env` file in the project root is the primary configuration source. However, you can also mount your `.env.local` file into the container for compatibility with your local development setup:
+
+```yaml
+# In docker-compose.yml
+services:
+  app:
+    # ... other configuration ...
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+      - /app/.next
+      - ./app/.env.local:/app/.env.local  # Mount local env file
+```
+
+### Using Mock Values for Development
+
+For development without a real Supabase instance, you can use mock values:
+
+```
+# Supabase - Mock values for development
+NEXT_PUBLIC_SUPABASE_URL=https://example.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE2MTYxNjY1NTIsImV4cCI6MTkzMTc0MjU1Mn0.placeholder
+```
+
+When using mock values, the application will detect this and use mock implementations instead of trying to connect to a real Supabase instance.
+
 ## Troubleshooting
 
 ### Container Won't Start
@@ -195,6 +251,36 @@ If a container fails to start, check the logs:
 ```bash
 ./docker-dev.sh logs:app
 ```
+
+### Missing Dependencies
+
+If you encounter "Module not found" errors, you may need to install additional dependencies:
+
+```bash
+./docker-dev.sh shell:app
+npm install missing-package-name
+exit
+./docker-dev.sh restart
+```
+
+Common missing dependencies include Radix UI components:
+
+```bash
+npm install @radix-ui/react-dialog @radix-ui/react-slot @radix-ui/react-tabs @radix-ui/react-select
+```
+
+### Environment Variable Issues
+
+If you see errors like `"your_supabase_url/auth/v1" cannot be parsed as a URL`, your environment variables are not set correctly:
+
+1. Check that your `.env` file exists in the project root
+2. Verify that the environment variables are being passed to the container:
+   ```bash
+   ./docker-dev.sh shell:app
+   echo $NEXT_PUBLIC_SUPABASE_URL
+   exit
+   ```
+3. If using mock Supabase values, ensure your application code handles them properly
 
 ### Database Connection Issues
 
@@ -230,4 +316,21 @@ If you need to rebuild the containers after significant changes:
 ```bash
 ./docker-dev.sh build
 ./docker-dev.sh restart
-``` 
+```
+
+### Package.json and Package-lock.json Sync Issues
+
+If you encounter errors during the Docker build related to missing packages in the lock file:
+
+1. Update your package-lock.json file:
+   ```bash
+   cd app
+   npm install
+   cd ..
+   ```
+
+2. Rebuild the Docker containers:
+   ```bash
+   ./docker-dev.sh build
+   ./docker-dev.sh start
+   ``` 

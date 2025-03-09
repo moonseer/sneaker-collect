@@ -7,6 +7,8 @@ import { useAuth } from '@/lib/auth';
 import { getSneakers } from '@/lib/supabase';
 import { Sneaker } from '@/lib/schema';
 import SortOptions, { SortOption } from '@/components/sneakers/SortOptions';
+import SelectableSneakerCard from '@/components/sneakers/SelectableSneakerCard';
+import BulkEditToolbar from '@/components/sneakers/BulkEditToolbar';
 
 export default function CollectionPage() {
   const { user } = useAuth();
@@ -16,6 +18,10 @@ export default function CollectionPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [brandFilter, setBrandFilter] = useState('');
   const [sizeFilter, setSizeFilter] = useState('');
+  
+  // Bulk edit state
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedSneakers, setSelectedSneakers] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     async function loadSneakers() {
@@ -120,14 +126,86 @@ export default function CollectionPage() {
     setSortOption({ field: 'brand', direction: 'asc' });
   };
 
+  // Bulk edit functions
+  const toggleSelectionMode = () => {
+    setSelectionMode(!selectionMode);
+    if (selectionMode) {
+      // Clear selections when exiting selection mode
+      setSelectedSneakers({});
+    }
+  };
+
+  const handleSelectSneaker = (sneakerId: string, isSelected: boolean) => {
+    setSelectedSneakers(prev => ({
+      ...prev,
+      [sneakerId]: isSelected
+    }));
+  };
+
+  const handleSelectAll = () => {
+    const allSelected = filteredAndSortedSneakers.every(
+      sneaker => selectedSneakers[sneaker.id]
+    );
+    
+    if (allSelected) {
+      // Deselect all
+      setSelectedSneakers({});
+    } else {
+      // Select all
+      const newSelected: Record<string, boolean> = {};
+      filteredAndSortedSneakers.forEach(sneaker => {
+        newSelected[sneaker.id] = true;
+      });
+      setSelectedSneakers(newSelected);
+    }
+  };
+
+  const clearSelection = () => {
+    setSelectedSneakers({});
+  };
+
+  const handleBulkEditComplete = async () => {
+    // Reload sneakers to get updated data
+    if (user) {
+      setLoading(true);
+      const data = await getSneakers(user.id, false);
+      setSneakers(data as Sneaker[]);
+      setLoading(false);
+    }
+    // Clear selections
+    setSelectedSneakers({});
+  };
+
+  // Get array of selected sneakers
+  const selectedSneakersArray = useMemo(() => {
+    return filteredAndSortedSneakers.filter(sneaker => selectedSneakers[sneaker.id]);
+  }, [filteredAndSortedSneakers, selectedSneakers]);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold">My Collection</h1>
-        <Link href="/collection/add">
-          <Button>Add Sneaker</Button>
-        </Link>
+        <div className="flex space-x-2">
+          <Button 
+            variant={selectionMode ? "default" : "outline"}
+            onClick={toggleSelectionMode}
+          >
+            {selectionMode ? "Exit Selection" : "Select Items"}
+          </Button>
+          <Link href="/collection/add">
+            <Button>Add Sneaker</Button>
+          </Link>
+        </div>
       </div>
+
+      {/* Bulk Edit Toolbar */}
+      {Object.keys(selectedSneakers).length > 0 && (
+        <BulkEditToolbar 
+          selectedSneakers={selectedSneakersArray}
+          onClearSelection={clearSelection}
+          onBulkEditComplete={handleBulkEditComplete}
+        />
+      )}
 
       {/* Search, Filter, and Sort */}
       <div className="mb-6 rounded-lg border bg-card p-4 shadow-sm">
@@ -178,11 +256,26 @@ export default function CollectionPage() {
               </Button>
             </div>
             
-            <div className="w-full md:w-64">
-              <SortOptions 
-                onSortChange={handleSortChange} 
-                currentSort={sortOption}
-              />
+            <div className="flex items-center space-x-2">
+              {selectionMode && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleSelectAll}
+                  className="whitespace-nowrap"
+                >
+                  {filteredAndSortedSneakers.every(sneaker => selectedSneakers[sneaker.id]) 
+                    ? "Deselect All" 
+                    : "Select All"}
+                </Button>
+              )}
+              
+              <div className="w-full md:w-64">
+                <SortOptions 
+                  onSortChange={handleSortChange} 
+                  currentSort={sortOption}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -241,41 +334,13 @@ export default function CollectionPage() {
         // Sneaker Grid
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {filteredAndSortedSneakers.map((sneaker) => (
-            <div key={sneaker.id} className="overflow-hidden rounded-lg border bg-card shadow-sm transition-all hover:shadow-md">
-              <div className="aspect-square overflow-hidden bg-muted">
-                {sneaker.images && sneaker.images.length > 0 ? (
-                  <img
-                    src={sneaker.images[0]}
-                    alt={`${sneaker.brand} ${sneaker.model} ${sneaker.name}`}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center bg-muted">
-                    <span className="text-muted-foreground">No Image</span>
-                  </div>
-                )}
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold">{sneaker.brand} {sneaker.model}</h3>
-                <p className="text-sm text-muted-foreground">{sneaker.name}</p>
-                <div className="mt-2 flex items-center justify-between">
-                  <span className="text-sm">Size: {sneaker.size}</span>
-                  <span className="font-medium">${sneaker.market_value || sneaker.retail_price || 'N/A'}</span>
-                </div>
-                <div className="mt-4 flex space-x-2">
-                  <Link href={`/collection/${sneaker.id}`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full">
-                      View
-                    </Button>
-                  </Link>
-                  <Link href={`/collection/${sneaker.id}/edit`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full">
-                      Edit
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <SelectableSneakerCard
+              key={sneaker.id}
+              sneaker={sneaker}
+              isSelected={!!selectedSneakers[sneaker.id]}
+              onSelectChange={handleSelectSneaker}
+              selectionMode={selectionMode}
+            />
           ))}
         </div>
       )}

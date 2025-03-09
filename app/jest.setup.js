@@ -59,6 +59,7 @@ jest.mock('@/lib/supabase', () => ({
       size: 10,
       condition: 'new',
       is_wishlist: false,
+      images: ['https://images.stockx.com/images/Air-Jordan-1-Retro-High-Chicago-2015-Product.jpg'],
     },
   ]),
   getSneakerById: jest.fn().mockImplementation((id) => {
@@ -72,6 +73,7 @@ jest.mock('@/lib/supabase', () => ({
       size: 10,
       condition: 'new',
       is_wishlist: false,
+      images: ['https://images.stockx.com/images/Air-Jordan-1-Retro-High-Chicago-2015-Product.jpg'],
     });
   }),
   getSneakersByIds: jest.fn().mockImplementation((ids) => {
@@ -95,17 +97,31 @@ jest.mock('@/lib/supabase', () => ({
   }),
   deleteSneaker: jest.fn().mockResolvedValue(true),
   getCollectionStats: jest.fn().mockResolvedValue({
-    totalSneakers: 3,
-    totalValue: 2000,
-    averageValue: 666.67,
-    brandDistribution: { Nike: 2, Adidas: 1 },
-    sizeDistribution: { '10': 2, '9.5': 1 },
+    totalSneakers: 18,
+    totalValue: 6160,
+    averageValue: 342.22,
+    brandDistribution: { 
+      Nike: 8, 
+      Adidas: 3, 
+      Jordan: 1, 
+      'New Balance': 1, 
+      Puma: 1, 
+      Converse: 1, 
+      Asics: 1, 
+      Vans: 1, 
+      Reebok: 1,
+      'Under Armour': 1
+    },
+    sizeDistribution: { 
+      '9.5': 6, 
+      '10': 12
+    },
     mostValuableSneaker: {
-      id: '1',
+      id: '12',
       brand: 'Nike',
-      model: 'Air Jordan 1',
-      name: 'Chicago',
-      market_value: 1500,
+      model: 'SB Dunk Low',
+      name: 'Travis Scott',
+      market_value: 1200,
     },
   }),
 }));

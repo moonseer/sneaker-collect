@@ -126,26 +126,54 @@
   - [ ] Implement monitoring and error tracking
   - [ ] Create deployment documentation
 
+### API Documentation
+- [ ] API Documentation Setup
+  - [ ] Research and select appropriate API documentation tool (Swagger/OpenAPI, Stoplight, etc.)
+  - [ ] Install and configure selected documentation tool
+  - [ ] Set up API documentation generation pipeline
+  - [ ] Create documentation structure and templates
+  
+- [ ] API Endpoint Documentation
+  - [ ] Document authentication endpoints
+  - [ ] Document sneaker collection endpoints (CRUD operations)
+  - [ ] Document wishlist endpoints
+  - [ ] Document analytics endpoints
+  - [ ] Document external integration endpoints (OpenAI, etc.)
+  
+- [ ] API Documentation Features
+  - [ ] Add request/response examples for each endpoint
+  - [ ] Include authentication requirements and error responses
+  - [ ] Create interactive API testing interface
+  - [ ] Add schema definitions with proper types
+  
+- [ ] API Documentation Integration
+  - [ ] Integrate documentation with existing codebase
+  - [ ] Set up automatic documentation generation from code comments/decorators
+  - [ ] Create developer portal for API documentation
+  - [ ] Add versioning support for API documentation
+
 ### Containerization
-- [ ] Docker Setup
+- [x] Docker Setup
   - [x] Create Dockerfile for Next.js application
   - [x] Set up Docker Compose for local development
   - [x] Configure environment variables for containerized setup
   - [x] Implement volume mounting for development hot-reloading
   - [x] Create Docker documentation (DOCKER.md)
+  - [x] Fix environment variables handling for Docker environment
   
-- [ ] Multi-Container Architecture
+- [x] Multi-Container Architecture
   - [x] Frontend container (Next.js application)
   - [x] Database container (Supabase or PostgreSQL)
   - [x] Cache container (Redis for performance optimization)
   - [x] API proxy container (Nginx for routing and SSL termination)
   
-- [ ] Development Environment
+- [x] Development Environment
   - [x] Create development-specific Docker configuration
   - [x] Set up hot-reloading for code changes
   - [x] Configure debugging tools in containerized environment
   - [x] Implement shared volume for code editing
   - [x] Create helper scripts for common Docker operations
+  - [x] Fix dependency issues for containerized environment
   
 - [ ] Production Environment
   - [x] Create production-optimized Docker images
@@ -186,11 +214,37 @@
   - [ ] Create duplicate resolution workflow
   - [ ] Implement merge functionality for duplicates
   
-- [ ] Bulk Edit Tools
-  - [ ] Design multi-select interface
-  - [ ] Implement batch update functionality
-  - [ ] Create templates for common bulk edits
-  - [ ] Add confirmation and preview for bulk changes
+- [x] Bulk Edit Tools
+  - [x] Design multi-select interface
+    - [x] Create checkbox selection for sneaker items
+    - [x] Implement select all/deselect all functionality
+    - [x] Add selection counter and feedback
+    - [x] Design selection persistence across pagination
+    - [x] Create mobile-friendly selection gestures
+  - [x] Implement batch update functionality
+    - [x] Create batch update API endpoint
+    - [x] Implement optimistic UI updates for batch operations
+    - [x] Add transaction support for batch operations
+    - [x] Implement rollback mechanism for failed batch updates
+    - [x] Create progress indicator for batch operations
+  - [x] Create templates for common bulk edits
+    - [x] Design template creation interface
+    - [x] Implement template saving and loading
+    - [x] Create predefined templates for common operations
+    - [x] Add template sharing functionality
+    - [x] Implement template versioning
+  - [x] Add confirmation and preview for bulk changes
+    - [x] Design preview modal for bulk changes
+    - [x] Create diff view to highlight changes
+    - [x] Implement validation for bulk operations
+    - [x] Add ability to exclude specific items from batch
+    - [x] Create detailed logs of bulk operations
+  - [x] Implement bulk export/import
+    - [x] Add CSV/Excel export for selected items
+    - [x] Create JSON export format with full details
+    - [x] Implement import validation and error handling
+    - [x] Add conflict resolution for imports
+    - [x] Create import preview and mapping interface
 
 ### Financial Features
 - [ ] Investment Tracking
@@ -262,11 +316,11 @@
   - [ ] Create notification system
   - [ ] Add personalized release recommendations
   
-- [ ] Collection Heatmap
-  - [ ] Design visual heatmap interface
-  - [ ] Implement data visualization
-  - [ ] Create interactive filtering
-  - [ ] Add insights and recommendations
+- [x] Collection Heatmap
+  - [x] Design visual heatmap interface
+  - [x] Implement data visualization
+  - [x] Create interactive filtering
+  - [x] Add insights and recommendations
   
 - [ ] Rarity Scores
   - [ ] Design rarity calculation algorithm
