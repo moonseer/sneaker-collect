@@ -9,11 +9,14 @@ import { getSneakerById, updateSneaker } from '@/lib/supabase';
 import { Sneaker } from '@/lib/schema';
 
 export default function EditSneakerPage({ params }: { params: { id: string } }) {
+  console.log("Rendering EditSneakerPage with params:", params);
+  
   const router = useRouter();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [sneaker, setSneaker] = useState<Partial<Sneaker> | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   const [formData, setFormData] = useState({
     brand: '',
     model: '',
@@ -33,25 +36,36 @@ export default function EditSneakerPage({ params }: { params: { id: string } }) 
   useEffect(() => {
     async function loadSneaker() {
       if (user) {
-        const data = await getSneakerById(params.id);
-        setSneaker(data as Sneaker);
-        
-        if (data) {
-          setFormData({
-            brand: data.brand || '',
-            model: data.model || '',
-            name: data.name || '',
-            colorway: data.colorway || '',
-            size: data.size?.toString() || '',
-            sku: data.sku || '',
-            condition: data.condition || '',
-            retail_price: data.retail_price?.toString() || '',
-            market_value: data.market_value?.toString() || '',
-            purchase_date: data.purchase_date ? new Date(data.purchase_date).toISOString().split('T')[0] : '',
-            purchase_price: data.purchase_price?.toString() || '',
-            purchase_location: data.purchase_location || '',
-            notes: data.notes || '',
-          });
+        console.log(`Loading sneaker with ID: ${params.id}`);
+        try {
+          const data = await getSneakerById(params.id);
+          console.log('Sneaker data loaded:', data);
+          
+          if (!data) {
+            console.warn(`No sneaker found with ID: ${params.id}`);
+            setSneaker(null);
+          } else {
+            setSneaker(data as Sneaker);
+            
+            setFormData({
+              brand: data.brand || '',
+              model: data.model || '',
+              name: data.name || '',
+              colorway: data.colorway || '',
+              size: data.size?.toString() || '',
+              sku: data.sku || '',
+              condition: data.condition || '',
+              retail_price: data.retail_price?.toString() || '',
+              market_value: data.market_value?.toString() || '',
+              purchase_date: data.purchase_date ? new Date(data.purchase_date).toISOString().split('T')[0] : '',
+              purchase_price: data.purchase_price?.toString() || '',
+              purchase_location: data.purchase_location || '',
+              notes: data.notes || '',
+            });
+          }
+        } catch (err) {
+          console.error('Error loading sneaker:', err);
+          setError(err instanceof Error ? err : new Error('Unknown error loading sneaker'));
         }
       }
       setLoading(false);
@@ -83,6 +97,8 @@ export default function EditSneakerPage({ params }: { params: { id: string } }) 
         retail_price: formData.retail_price ? parseFloat(formData.retail_price) : undefined,
         market_value: formData.market_value ? parseFloat(formData.market_value) : undefined,
         purchase_price: formData.purchase_price ? parseFloat(formData.purchase_price) : undefined,
+        purchase_date: formData.purchase_date ? new Date(formData.purchase_date) : undefined,
+        condition: formData.condition as 'new' | 'like_new' | 'good' | 'fair' | 'poor' | 'worn',
       };
       
       await updateSneaker(params.id, sneakerData);
@@ -101,6 +117,26 @@ export default function EditSneakerPage({ params }: { params: { id: string } }) 
         <div className="text-center">
           <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
           <p>Loading sneaker details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-3xl font-bold">Error Loading Sneaker</h1>
+          <Link href="/collection">
+            <Button variant="outline">Back to Collection</Button>
+          </Link>
+        </div>
+        <div className="rounded-lg border bg-card p-6 shadow-sm">
+          <p className="text-red-500 font-medium">An error occurred while loading the sneaker:</p>
+          <pre className="mt-2 p-2 bg-gray-100 rounded overflow-auto text-sm">
+            {error.message}
+            {error.stack && <div className="mt-2 text-xs">{error.stack}</div>}
+          </pre>
         </div>
       </div>
     );
@@ -249,6 +285,7 @@ export default function EditSneakerPage({ params }: { params: { id: string } }) 
                   <option value="good">Good (Light wear)</option>
                   <option value="fair">Fair (Visible wear)</option>
                   <option value="poor">Poor (Heavy wear)</option>
+                  <option value="worn">Worn</option>
                 </select>
               </div>
               

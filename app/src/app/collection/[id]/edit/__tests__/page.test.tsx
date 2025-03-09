@@ -43,7 +43,7 @@ describe('EditSneakerPage', () => {
       model: 'Air Jordan 1',
       name: 'Chicago',
       colorway: 'Red/White/Black',
-      size: 10,
+      size: 12,
       condition: 'new',
       sku: 'CW2288-111',
       retail_price: 170,
@@ -85,7 +85,7 @@ describe('EditSneakerPage', () => {
       model: 'Air Jordan 1',
       name: 'Chicago',
       colorway: 'Red/White/Black',
-      size: 10,
+      size: 12,
       condition: 'new',
       sku: 'CW2288-111',
       retail_price: 170,
@@ -163,7 +163,7 @@ describe('EditSneakerPage', () => {
             model: 'Air Jordan 1',
             name: 'Chicago',
             colorway: 'Red/White/Black',
-            size: 10,
+            size: 12,
             condition: 'new',
           });
         }, 100);

@@ -5,23 +5,47 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth';
-import { getSneakerById, deleteSneaker, updateSneaker } from '@/lib/supabase';
+import { getSneakerById, deleteSneaker } from '@/lib/supabase';
 import { Sneaker } from '@/lib/schema';
-import SneakerUpdateForm from '@/components/sneakers/SneakerUpdateForm';
 
 export default function SneakerDetailPage({ params }: { params: { id: string } }) {
+  console.log("Rendering SneakerDetailPage with params:", params);
+  
   const router = useRouter();
   const { user } = useAuth();
   const [sneaker, setSneaker] = useState<Sneaker | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
-  const [updating, setUpdating] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     async function loadSneaker() {
       if (user) {
-        const data = await getSneakerById(params.id);
-        setSneaker(data as Sneaker);
+        console.log(`Loading sneaker with ID: ${params.id}`);
+        try {
+          const data = await getSneakerById(params.id);
+          console.log('Sneaker data loaded:', data);
+          
+          if (!data) {
+            console.warn(`No sneaker found with ID: ${params.id}`);
+            setSneaker(null);
+          } else {
+            // Ensure all date fields are properly converted to Date objects
+            const processedData = {
+              ...data,
+              created_at: data.created_at instanceof Date ? data.created_at : new Date(data.created_at),
+              updated_at: data.updated_at instanceof Date ? data.updated_at : new Date(data.updated_at),
+              purchase_date: data.purchase_date instanceof Date ? 
+                data.purchase_date : 
+                (data.purchase_date ? new Date(data.purchase_date) : undefined)
+            };
+            
+            setSneaker(processedData as Sneaker);
+          }
+        } catch (err) {
+          console.error('Error loading sneaker:', err);
+          setError(err instanceof Error ? err : new Error('Unknown error loading sneaker'));
+        }
       }
       setLoading(false);
     }
@@ -45,29 +69,32 @@ export default function SneakerDetailPage({ params }: { params: { id: string } }
     }
   };
 
-  const handleUpdate = async (updatedSneaker: Partial<Sneaker>) => {
-    if (!sneaker) return;
-    
-    setUpdating(true);
-    try {
-      await updateSneaker(sneaker.id, updatedSneaker);
-      // Refresh the sneaker data
-      const refreshedData = await getSneakerById(params.id);
-      setSneaker(refreshedData as Sneaker);
-    } catch (error) {
-      console.error('Error updating sneaker:', error);
-      alert('Failed to update sneaker');
-    } finally {
-      setUpdating(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="container mx-auto flex items-center justify-center px-4 py-16">
         <div className="text-center">
           <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
           <p>Loading sneaker details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-3xl font-bold">Error Loading Sneaker</h1>
+          <Link href="/collection">
+            <Button variant="outline">Back to Collection</Button>
+          </Link>
+        </div>
+        <div className="rounded-lg border bg-card p-6 shadow-sm">
+          <p className="text-red-500 font-medium">An error occurred while loading the sneaker:</p>
+          <pre className="mt-2 p-2 bg-gray-100 rounded overflow-auto text-sm">
+            {error.message}
+            {error.stack && <div className="mt-2 text-xs">{error.stack}</div>}
+          </pre>
         </div>
       </div>
     );
@@ -100,7 +127,7 @@ export default function SneakerDetailPage({ params }: { params: { id: string } }
           <Link href={`/collection/${params.id}/edit`}>
             <Button variant="outline">Edit</Button>
           </Link>
-          <Button variant="destructive" onClick={handleDelete} disabled={deleting || updating}>
+          <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
             {deleting ? 'Deleting...' : 'Delete'}
           </Button>
         </div>
@@ -121,14 +148,6 @@ export default function SneakerDetailPage({ params }: { params: { id: string } }
                 <span className="text-muted-foreground">No Image</span>
               </div>
             )}
-          </div>
-          
-          {/* Add the SneakerUpdateForm component */}
-          <div className="mt-6">
-            <SneakerUpdateForm 
-              currentSneaker={sneaker} 
-              onUpdate={handleUpdate} 
-            />
           </div>
         </div>
 

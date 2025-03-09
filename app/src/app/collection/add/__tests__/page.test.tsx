@@ -94,7 +94,7 @@ describe('AddSneakerPage', () => {
       fireEvent.change(screen.getByLabelText(/Model/i), { target: { value: 'Air Jordan 1' } });
       fireEvent.change(screen.getByLabelText(/Name\/Colorway Name/i), { target: { value: 'Chicago' } });
       fireEvent.change(screen.getByLabelText(/Colorway Description/i), { target: { value: 'Red/White/Black' } });
-      fireEvent.change(screen.getByLabelText(/Size/i), { target: { value: '10' } });
+      fireEvent.change(screen.getByLabelText(/Size/i), { target: { value: '12' } });
       fireEvent.change(screen.getByLabelText(/Condition/i), { target: { value: 'new' } });
       fireEvent.change(screen.getByLabelText(/SKU Number/i), { target: { value: 'CW2288-111' } });
     });
@@ -113,7 +113,7 @@ describe('AddSneakerPage', () => {
         model: 'Air Jordan 1',
         name: 'Chicago',
         colorway: 'Red/White/Black',
-        size: 10,
+        size: 12,
         condition: 'new',
         sku: 'CW2288-111',
         user_id: 'user123',

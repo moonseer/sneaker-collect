@@ -14,11 +14,21 @@ import {
 
 // Regular import for the home page since it's the first page users see
 import HomePage from "./page";
+// Import the simplified sneaker detail page
+import SneakerDetailPage from "./collection/[id]/page";
+// Import the test page
+import TestPage from "./collection/[id]/test-page";
+// Import the edit page
+import EditSneakerPage from "./collection/[id]/edit/page";
 
 interface RouteConfig {
   path: string;
   component: React.ComponentType<any>;
   requireAuth?: boolean;
+  // Add a pattern property for dynamic routes
+  pattern?: RegExp;
+  // Add a getParams function to extract params from the path
+  getParams?: (pathname: string) => any;
 }
 
 // Define routes with their components
@@ -30,17 +40,65 @@ const routes: RouteConfig[] = [
   { path: "/design", component: DesignSystemPage },
   { path: "/design/typography", component: DesignTypographyPage },
   { path: "/design/images", component: DesignImagesPage },
+  // Add a pattern for test-simple
+  { 
+    path: "/test-simple", 
+    component: () => <div>Test Simple Page</div>,
+    pattern: /^\/test-simple$/
+  },
+  // Add a pattern for sneaker detail page
+  {
+    path: "/collection/[id]",
+    component: SneakerDetailPage,
+    requireAuth: true,
+    pattern: /^\/collection\/([^\/]+)$/,
+    getParams: (pathname) => {
+      const match = pathname.match(/^\/collection\/([^\/]+)$/);
+      return match ? { id: match[1] } : {};
+    }
+  },
+  // Add a pattern for sneaker test page
+  {
+    path: "/collection/[id]/test-page",
+    component: TestPage,
+    requireAuth: true,
+    pattern: /^\/collection\/([^\/]+)\/test-page$/,
+    getParams: (pathname) => {
+      const match = pathname.match(/^\/collection\/([^\/]+)\/test-page$/);
+      return match ? { id: match[1] } : {};
+    }
+  },
+  // Add a pattern for sneaker edit page
+  {
+    path: "/collection/[id]/edit",
+    component: EditSneakerPage,
+    requireAuth: true,
+    pattern: /^\/collection\/([^\/]+)\/edit$/,
+    getParams: (pathname) => {
+      const match = pathname.match(/^\/collection\/([^\/]+)\/edit$/);
+      return match ? { id: match[1] } : {};
+    }
+  }
 ];
 
 export function AppRouter() {
   const pathname = usePathname();
   const { user, loading } = useAuth();
 
-  // Find the current route
-  const route = routes.find((r) => r.path === pathname);
+  console.log("Current pathname:", pathname);
+
+  // Find the current route - first check exact matches, then patterns
+  const route = routes.find(
+    (r) => r.path === pathname || (r.pattern && r.pattern.test(pathname))
+  );
+
+  console.log("Matched route:", route);
 
   // If no route is found, return null (will be handled by Next.js)
-  if (!route) return null;
+  if (!route) {
+    console.log("No route found for:", pathname);
+    return null;
+  }
 
   // If the route requires authentication and the user is not logged in
   if (route.requireAuth && !loading && !user) {
@@ -63,7 +121,11 @@ export function AppRouter() {
     );
   }
 
+  // Extract params if this is a dynamic route
+  const params = route.getParams ? route.getParams(pathname) : {};
+  console.log("Route params:", params);
+
   // Render the component for the current route
   const RouteComponent = route.component;
-  return <RouteComponent />;
+  return <RouteComponent params={params} />;
 } 

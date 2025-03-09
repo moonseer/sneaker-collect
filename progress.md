@@ -43,6 +43,7 @@
   - [x] Implement sneaker data model
   - [x] Create API endpoints for CRUD operations
   - [x] Implement mock data for development without Supabase
+  - [x] Import mock data from dataset
   
 - [x] Collection Management
   - [x] Build sneaker addition form
@@ -100,11 +101,13 @@
   - [x] Add 'use client' directive to client components
   - [x] Fix metadata exports in client components
   - [x] Fix type errors in dashboard and collection pages
+  - [x] Implement custom routing solution for dynamic routes
   
 - [x] Performance & UX
   - [x] Enhance UI with loading states
   - [x] Fix Next.js version compatibility issues
   - [x] Add error handling for missing environment variables
+  - [x] Fix blank page issues with dynamic routes
 
 ## Remaining Tasks
 ### Polishing

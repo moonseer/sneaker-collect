@@ -67,17 +67,19 @@ export default function SelectableSneakerCard({
         
         {/* Only show action buttons if not in selection mode or on hover */}
         {(!selectionMode || isHovered) && (
-          <div className="mt-4 flex space-x-2">
-            <Link href={`/collection/${sneaker.id}`} className="flex-1">
-              <Button variant="outline" size="sm" className="w-full">
-                View
-              </Button>
-            </Link>
-            <Link href={`/collection/${sneaker.id}/edit`} className="flex-1">
-              <Button variant="outline" size="sm" className="w-full">
-                Edit
-              </Button>
-            </Link>
+          <div className="mt-4 flex flex-col space-y-2">
+            <div className="flex space-x-2">
+              <Link href={`/collection/${sneaker.id}`} className="flex-1">
+                <Button variant="default" size="sm" className="w-full">
+                  View
+                </Button>
+              </Link>
+              <Link href={`/collection/${sneaker.id}/edit`} className="flex-1">
+                <Button variant="outline" size="sm" className="w-full">
+                  Edit
+                </Button>
+              </Link>
+            </div>
           </div>
         )}
       </div>

@@ -92,6 +92,17 @@ export default function AddSneakerPage() {
       const sneakerData = {
         ...formData,
         user_id: user.id,
+        size: typeof formData.size === 'string' ? parseFloat(formData.size) : formData.size || 0,
+        retail_price: formData.retail_price !== undefined ? 
+          (typeof formData.retail_price === 'string' ? parseFloat(formData.retail_price) : formData.retail_price) : 
+          undefined,
+        market_value: formData.market_value !== undefined ? 
+          (typeof formData.market_value === 'string' ? parseFloat(formData.market_value) : formData.market_value) : 
+          undefined,
+        purchase_price: formData.purchase_price !== undefined ? 
+          (typeof formData.purchase_price === 'string' ? parseFloat(formData.purchase_price) : formData.purchase_price) : 
+          undefined,
+        condition: formData.condition as 'new' | 'like_new' | 'good' | 'fair' | 'poor' | 'worn',
       };
       
       await createSneaker(sneakerData as Sneaker);
@@ -232,6 +243,7 @@ export default function AddSneakerPage() {
                   <option value="good">Good (Light wear)</option>
                   <option value="fair">Fair (Visible wear)</option>
                   <option value="poor">Poor (Heavy wear)</option>
+                  <option value="worn">Worn</option>
                 </select>
               </div>
               

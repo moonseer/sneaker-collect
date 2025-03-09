@@ -8,6 +8,8 @@ The app will have intuitive search and filter functionality.
     - search a common sneaker database to obtain details about sneaker (ie api)
     - use OpenAI GPT-4 Turbo to automatically find sneaker details by SKU
 - View all sneakers in the collection
+    - browse a comprehensive dataset of over 80 sneakers
+    - view detailed information about each sneaker
 - Edit a sneaker in the collection
     - manually update sneaker details
     - automatically update information using OpenAI GPT-4 Turbo by SKU lookup
@@ -40,6 +42,16 @@ The app will have intuitive search and filter functionality.
 - **Bundle Size Reduction**: Optimized webpack configuration for smaller bundle sizes
 
 ## Architecture
+
+### Routing System
+The application uses a custom routing solution to handle dynamic routes in Next.js. This approach provides several benefits:
+
+- **Dynamic Route Handling**: Properly handles routes with parameters like `/collection/[id]`
+- **Parameter Extraction**: Automatically extracts and passes parameters to page components
+- **Authentication Integration**: Seamlessly integrates with the authentication system for protected routes
+- **Lazy Loading Support**: Works with code splitting and lazy loading for optimal performance
+
+The custom router is implemented in `routes.tsx` and uses regex patterns to match routes and extract parameters.
 
 ### Component Diagram
 The following diagram shows the main components of the application and their relationships:
@@ -196,6 +208,34 @@ erDiagram
 10. Performance optimizations
 11. Containerization with Docker
 12. Deployment
+
+## Dataset
+The application includes a comprehensive dataset of over 80 sneakers from various brands including Nike, Jordan, Adidas, New Balance, and more. The dataset includes:
+- Detailed sneaker information (brand, model, name, colorway)
+- SKU numbers for accurate identification
+- High-quality images for each sneaker
+- Release dates
+- Price information
+
+This dataset is used to populate the mock database for development and testing purposes.
+
+## Bug Fixes and Improvements
+
+### Routing System Enhancement
+The application initially faced issues with blank pages when navigating to dynamic routes like sneaker detail pages. This was resolved by implementing a custom routing solution that:
+
+- Properly handles dynamic routes with parameters
+- Extracts and passes parameters to page components
+- Integrates with the authentication system
+- Provides better error handling and debugging
+
+This enhancement ensures smooth navigation throughout the application, particularly when viewing and editing sneaker details.
+
+### Data Handling Improvements
+- Fixed issues with special characters in sneaker names
+- Implemented proper date handling for purchase dates
+- Added support for various sneaker conditions including "worn"
+- Enhanced error handling for data loading and submission
 
 ## Getting Started
 

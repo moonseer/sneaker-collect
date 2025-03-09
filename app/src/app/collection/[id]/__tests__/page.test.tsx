@@ -31,7 +31,7 @@ describe('SneakerDetailPage', () => {
       model: 'Air Jordan 1',
       name: 'Chicago',
       colorway: 'Red/White/Black',
-      size: 10,
+      size: 12,
       retail_price: 170,
       market_value: 1500,
       condition: 'new',
@@ -65,7 +65,7 @@ describe('SneakerDetailPage', () => {
     const colorwayElement = screen.getByText('Red/White/Black');
     expect(colorwayElement).toBeInTheDocument();
     
-    const sizeElement = screen.getByText(/US 10/i);
+    const sizeElement = screen.getByText(/US 12/i);
     expect(sizeElement).toBeInTheDocument();
   });
 
@@ -101,7 +101,7 @@ describe('SneakerDetailPage', () => {
       model: 'Air Jordan 1',
       name: 'Chicago',
       colorway: 'Red/White/Black',
-      size: 10,
+      size: 12,
       condition: 'new',
       created_at: new Date(),
       updated_at: new Date(),

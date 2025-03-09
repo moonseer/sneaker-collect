@@ -56,10 +56,10 @@ jest.mock('@/lib/supabase', () => ({
       model: 'Air Jordan 1',
       name: 'Chicago',
       colorway: 'Red/White/Black',
-      size: 10,
+      size: 12,
       condition: 'new',
       is_wishlist: false,
-      images: ['https://images.stockx.com/images/Air-Jordan-1-Retro-High-Chicago-2015-Product.jpg'],
+      images: ['https://cdn.flightclub.com/750/TEMPLATE/800502/1.jpg'],
     },
   ]),
   getSneakerById: jest.fn().mockImplementation((id) => {
@@ -70,10 +70,10 @@ jest.mock('@/lib/supabase', () => ({
       model: 'Air Jordan 1',
       name: 'Chicago',
       colorway: 'Red/White/Black',
-      size: 10,
+      size: 12,
       condition: 'new',
       is_wishlist: false,
-      images: ['https://images.stockx.com/images/Air-Jordan-1-Retro-High-Chicago-2015-Product.jpg'],
+      images: ['https://cdn.flightclub.com/750/TEMPLATE/800502/1.jpg'],
     });
   }),
   getSneakersByIds: jest.fn().mockImplementation((ids) => {

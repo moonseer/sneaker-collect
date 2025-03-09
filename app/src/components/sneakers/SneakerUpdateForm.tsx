@@ -12,6 +12,8 @@ interface SneakerUpdateFormProps {
 }
 
 export default function SneakerUpdateForm({ currentSneaker, onUpdate }: SneakerUpdateFormProps) {
+  console.log("Rendering SneakerUpdateForm with currentSneaker:", currentSneaker);
+  
   const [sku, setSku] = useState(currentSneaker.sku || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -37,6 +39,7 @@ export default function SneakerUpdateForm({ currentSneaker, onUpdate }: SneakerU
         
         // Map the LLM data to our Sneaker model
         const lookupData = mapLLMSneakerData(result);
+        console.log('Mapped lookup data:', lookupData);
         
         // Merge with current sneaker data, prioritizing the lookup data
         // but keeping fields that should not be overwritten
@@ -56,6 +59,8 @@ export default function SneakerUpdateForm({ currentSneaker, onUpdate }: SneakerU
           created_at: currentSneaker.created_at,
           updated_at: new Date(),
         };
+        
+        console.log('Final updated sneaker data:', updatedSneaker);
         
         // Call the onUpdate callback with the updated sneaker
         onUpdate(updatedSneaker);
