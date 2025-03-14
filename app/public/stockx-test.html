@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockX API Test (Static)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .sneaker-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .sneaker-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .sneaker-card-content {
+            padding: 15px;
+        }
+        .sneaker-card h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+        .sneaker-card p {
+            margin: 5px 0;
+            color: #666;
+        }
+        a {
+            color: blue;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>StockX API Test (Static HTML)</h1>
+        
+        <div class="card">
+            <p style="font-size: 18px; margin-bottom: 16px;">Welcome to the StockX API Test Page</p>
+            <p style="margin-bottom: 16px;">
+                This is a static HTML version of the StockX API test page. 
+                In a real implementation, this would connect to the StockX API to fetch real-time data.
+            </p>
+            <div style="margin-top: 16px;">
+                <a href="/">Return to Home</a>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <!-- Sample Sneaker Cards -->
+            <div class="sneaker-card">
+                <img src="https://images.stockx.com/images/Air-Jordan-1-Retro-High-OG-Chicago-2022-Product.jpg" alt="Air Jordan 1 Chicago">
+                <div class="sneaker-card-content">
+                    <h3>Air Jordan 1 Chicago</h3>
+                    <p>SKU: 555088-101</p>
+                    <p><strong>Retail:</strong> $170</p>
+                    <p><strong>Market:</strong> $450</p>
+                </div>
+            </div>
+            
+            <div class="sneaker-card">
+                <img src="https://images.stockx.com/images/Air-Jordan-4-Retro-Black-Cement-2019-Product.jpg" alt="Air Jordan 4 Bred">
+                <div class="sneaker-card-content">
+                    <h3>Air Jordan 4 Bred</h3>
+                    <p>SKU: 308497-060</p>
+                    <p><strong>Retail:</strong> $200</p>
+                    <p><strong>Market:</strong> $380</p>
+                </div>
+            </div>
+            
+            <div class="sneaker-card">
+                <img src="https://images.stockx.com/images/Adidas-Yeezy-Boost-350-V2-Zebra-Product.jpg" alt="Yeezy 350 Zebra">
+                <div class="sneaker-card-content">
+                    <h3>adidas Yeezy Boost 350 V2 Zebra</h3>
+                    <p>SKU: CP9654</p>
+                    <p><strong>Retail:</strong> $220</p>
+                    <p><strong>Market:</strong> $320</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card" style="margin-top: 20px;">
+            <h2 style="margin-top: 0;">Implementation Notes</h2>
+            <p>
+                This is a simplified static version. In a full implementation, you would be able to:
+            </p>
+            <ul>
+                <li>Search for sneakers on StockX</li>
+                <li>View detailed product information</li>
+                <li>See market data including lowest ask, highest bid, and sales history</li>
+                <li>Track price changes over time</li>
+            </ul>
+            <p>
+                The actual implementation would require integrating with the StockX API
+                and handling authentication securely.
+            </p>
+        </div>
+    </div>
+</body>
+</html> 

@@ -21,6 +21,7 @@ The app will have intuitive search and filter functionality.
 - View all sneakers in the wishlist
 - Delete a sneaker from the wishlist
 - Be able to view rich infomatics about my collection like total value of collection, most valuable sneakers, etc.
+- Access StockX market data for sneakers (test implementation)
 
 ## UI/UX Design
 - **Dashboard**: Main landing page showing collection overview, stats, and quick access to features
@@ -316,5 +317,98 @@ npm run analyze:browser
 Additional documentation can be found in the `docs` directory:
 - [Performance Optimizations](./docs/performance-optimizations.md)
 - [Docker Setup](./DOCKER.md)
+
+## StockX API Integration (Test Implementation)
+
+The application includes a test implementation of StockX API integration that allows you to:
+
+1. Search for sneakers on StockX
+2. View detailed product information
+3. Access market data including lowest ask, highest bid, and sales history
+
+**Note:** This is currently a mock implementation using sample data. In a production environment, you would need to implement the actual StockX API integration.
+
+### StockX API Test Page
+
+A dedicated test page is available at `/stockx-test` to demonstrate the potential of the StockX API integration. This page allows you to:
+
+- Search for sneakers
+- View search results
+- See detailed product information
+- Access market data
+
+### Environment Variables
+
+To use the StockX API integration, you need to set the following environment variables:
+
+```
+STOCKX_EMAIL_ENCODED=<base64_encoded_email>
+STOCKX_PASSWORD_ENCODED=<base64_encoded_password>
+```
+
+For security reasons, the credentials are stored in Base64 encoded format.
+
+## StockX API Integration
+
+The application includes a StockX API integration via Retailed.io that allows you to:
+
+1. Search for sneakers on StockX by SKU
+2. View detailed product information
+3. Access market data including lowest ask, highest bid, and sales history
+4. Get real-time pricing information
+
+The StockX integration provides real-time market data for sneakers, helping you make informed decisions about your collection and potential purchases.
+
+### Features
+
+- **SKU Search**: Search for sneakers by SKU number for precise results
+- **Detailed Information**: View comprehensive details about each sneaker
+- **Market Data**: See current market prices, including lowest ask and highest bid
+- **Real-time Pricing**: Get up-to-date pricing information from StockX
+- **Seamless Integration**: Easily add sneakers to your collection with accurate market values
+
+### API Integration
+
+The application uses the Retailed.io API to access StockX data. This provides a reliable and up-to-date source of sneaker market information without requiring direct authentication with StockX.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 16.x or higher
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Set up environment variables (see `.env.example`)
+4. Run the development server:
+   ```
+   npm run dev
+   ```
+
+## Docker Support
+
+The application includes Docker support for easy deployment and development.
+
+### Development
+
+```
+./docker-dev.sh start
+```
+
+### Production
+
+```
+./docker-prod.sh start
+```
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 

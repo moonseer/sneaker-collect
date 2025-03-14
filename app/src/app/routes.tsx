@@ -20,6 +20,8 @@ import SneakerDetailPage from "./collection/[id]/page";
 import TestPage from "./collection/[id]/test-page";
 // Import the edit page
 import EditSneakerPage from "./collection/[id]/edit/page";
+// Import the add sneaker page
+import AddSneakerPage from "./collection/add/page";
 
 interface RouteConfig {
   path: string;
@@ -45,6 +47,13 @@ const routes: RouteConfig[] = [
     path: "/test-simple", 
     component: () => <div>Test Simple Page</div>,
     pattern: /^\/test-simple$/
+  },
+  // Add the add sneaker page route
+  {
+    path: "/collection/add",
+    component: AddSneakerPage,
+    requireAuth: true,
+    pattern: /^\/collection\/add$/
   },
   // Add a pattern for sneaker detail page
   {

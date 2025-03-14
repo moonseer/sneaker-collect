@@ -10,7 +10,7 @@ FROM base AS development
 WORKDIR /app
 COPY . .
 # Install additional dependencies needed for development
-RUN npm install @radix-ui/react-checkbox @radix-ui/react-dialog @radix-ui/react-select
+RUN npm install @radix-ui/react-checkbox @radix-ui/react-dialog @radix-ui/react-select axios
 # Expose port for development server
 EXPOSE 3000
 # Start development server with hot reloading
@@ -21,14 +21,18 @@ FROM base AS builder
 WORKDIR /app
 COPY . .
 # Install additional dependencies needed for build
-RUN npm install @radix-ui/react-checkbox @radix-ui/react-dialog @radix-ui/react-select
+RUN npm install @radix-ui/react-checkbox @radix-ui/react-dialog @radix-ui/react-select axios
 # Set environment variables for production build
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 ARG NEXT_PUBLIC_OPENAI_API_KEY
+ARG STOCKX_EMAIL_ENCODED
+ARG STOCKX_PASSWORD_ENCODED
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_PUBLIC_OPENAI_API_KEY=$NEXT_PUBLIC_OPENAI_API_KEY
+ENV STOCKX_EMAIL_ENCODED=$STOCKX_EMAIL_ENCODED
+ENV STOCKX_PASSWORD_ENCODED=$STOCKX_PASSWORD_ENCODED
 # Build the application
 RUN npm run build
 
